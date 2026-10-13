@@ -36,7 +36,11 @@ export async function connectDB() {
   };
 
   if (process.env.DB_SSL === "true") {
-    baseConfig.ssl = { rejectUnauthorized: true };
+    const ssl = { rejectUnauthorized: true };
+    if (process.env.DB_SSL_CA) {
+      ssl.ca = process.env.DB_SSL_CA.replace(/\\n/g, "\n");
+    }
+    baseConfig.ssl = ssl;
   }
 
   pool = mysql.createPool({ ...baseConfig, database });
